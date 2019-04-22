@@ -1,0 +1,14 @@
+{% extends "client/base.html" %}
+
+{% block content %}
+
+
+    {% for d in data %}
+
+     <h1>{{ d.content }}</h1>
+    <h1>{{ d.hash }}</h1>
+
+    {%endfor%}
+
+
+{% endblock content %}
