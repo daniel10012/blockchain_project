@@ -2,11 +2,24 @@
 
 {% block content %}
 
-<form action="hash:get_hash" method="post">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Submit">
-</form>
+
+
+      <form name = "form" action = "{% url 'hash:get_hash' %}" method = "POST" >
+          {% csrf_token %}
+
+         <div style = "max-width:470px;">
+            <center>
+                Data
+                {{data}}
+               <input type = "text" style = "margin-left:20%;" placeholder = "Data" name = "input data" />
+            </center>
+         </div>
+
+
+
+
+
+      </form>
 
 
 

@@ -22,17 +22,21 @@ def single(request,data_id):
 def get_hash(request):
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
+        print("aaaa")
         # create a form instance and populate it with data from the request:
         form = NewhashForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
-            # process the data in form.cleaned_data as required
-            # ...
-            # redirect to a new URL:
-            return HttpResponseRedirect('/thanks/')
+            data = form.cleaned_data['data']
+            context = {
+                'data': data,
+            }
+            #return HttpResponseRedirect('hash/new.html')
+            return render(request, 'hash/new.html', context)
 
     # if a GET (or any other method) we'll create a blank form
     else:
         form = NewhashForm()
+        print("bbbbb")
 
     return render(request, 'hash/new.html', {'form': form})
