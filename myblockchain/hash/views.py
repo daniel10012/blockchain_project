@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from .models import Data, Block
 from django.urls import reverse
-from .forms import NewhashForm, NewblockForm
+from .forms import NewhashForm, NewblockForm, MineForm
 
 
 def data(request):
@@ -53,7 +53,13 @@ def get_block(request):
         form = NewblockForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
-            block = Block(block_num=form.cleaned_data['block_num'], nonce=form.cleaned_data['nonce'], data=form.cleaned_data['data'])
+            block = Block(block_num=form.cleaned_data['block_num'],
+                          nonce=form.cleaned_data['nonce'],
+                          data=form.cleaned_data['data'])
+            block.save()
+            block_num = block.block_num
+            nonce = block.nonce
+            data = block.data
 
             h = block.hashing()
 
@@ -61,9 +67,11 @@ def get_block(request):
                 'block_num':block_num,
                 'nonce':nonce,
                 'data': data,
+                'h':h,
             }
-            print(type(block_num))
+            print(block_num)
             print(nonce)
+            print(data)
             print(h)
 
 
@@ -75,3 +83,45 @@ def get_block(request):
         print("ddddd")
 
     return render(request, 'hash/block.html', {'form': form})
+
+
+
+def mine(request):
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        print("eeee")
+        # create a form instance and populate it with data from the request:
+        form = MineForm(request.POST, initial={'nonce': "0"})
+        # check whether it's valid:
+        if form.is_valid():
+            block = Block(block_num=form.cleaned_data['block_num'],
+                          nonce="0",
+                          data=form.cleaned_data['data'])
+            block.save()
+            block_num = block.block_num
+            nonce = block.nonce
+            data = block.data
+
+            dict = block.mine()
+            print(dict)
+
+            context = {
+                'block_num':block_num,
+                'nonce':dict["nonce"],
+                'h':dict["hash"],
+                'data': data,
+            }
+            print(block_num)
+            print(nonce)
+            print(data)
+
+
+
+            return render(request, 'hash/mine.html', context)
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = MineForm(initial={'nonce': "0"})
+        print("ffff")
+
+    return render(request, 'hash/mine.html', {'form': form})

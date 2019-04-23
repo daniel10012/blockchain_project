@@ -11,22 +11,22 @@
 
 
 <div class="container alert alert-secondary">
-      <form name = "form" action = "{% url 'hash:get_block' %}" method = "POST" >
+      <form name = "form" action = "{% url 'hash:mine' %}" method = "POST" >
           {% csrf_token %}
             {{ form|crispy }}
 
 
         <div class="row">
           <div class="col-lg-12 text-center">
-            <input type="submit" id="get_hash" class="btn btn-primary btn-lg" value="Get Hash">
+            <input type="submit" id="get_nonce" class="btn btn-primary btn-lg" value="Mine">
           </div>
         </div>
       </form>
 
             {% if data %}
 
-        <h1>the hash corresponding to the block {{block_num}} with the nonce {{nonce}} and the data {{data}} is:  </h1>
-    <p> {{h}}</p>
+        <h1>the nonce that enable to get a hash with four leading zeroes is : {{nonce}} </h1>
+    <p> The hash of the block is : {{h}}</p>
         {% endif %}
 
 

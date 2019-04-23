@@ -31,6 +31,17 @@ class Block(models.Model):
         hex_dig = hash_object.hexdigest()
         return (hex_dig)
 
+    def mine(self, difficulty=4):
+        nonce = "0"
+        h = self.hashing()
+        while h[:difficulty] != difficulty * "0":
+            n = int(nonce)
+            n += 1
+            nonce = str(n)
+            self.nonce = nonce
+            h = self.hashing()
+        return {"nonce": nonce, "hash": h}
+
 # my_str = "hello world"
 # my_str_as_bytes = str.encode(my_str)
 # type(my_str_as_bytes) # ensure it is byte representation
