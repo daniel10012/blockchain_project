@@ -11,7 +11,7 @@
 
 
 <div class="container alert alert-secondary">
-      <form name = "form" action = "{% url 'hash:get_hash' %}" method = "POST" >
+      <form name = "form" action = "{% url 'hash:get_block' %}" method = "POST" >
           {% csrf_token %}
             {{ form|crispy }}
 

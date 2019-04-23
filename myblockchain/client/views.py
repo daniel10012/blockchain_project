@@ -7,7 +7,7 @@ from django.urls import reverse
 blockchain = Blockchain()
 
 def index(request):
-    return HttpResponse("Hello, world. You're at the client index page.")
+    return render(request, 'client/base.html')
 
 #@app.route('/chain', methods=['GET'])
 
