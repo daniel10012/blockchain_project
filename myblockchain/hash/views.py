@@ -24,7 +24,7 @@ def get_hash(request):
     if request.method == 'POST':
         print("aaaa")
         # create a form instance and populate it with data from the request:
-        form = NewhashForm(request.POST)
+        form = NewhashForm(request.POST, initial={'h': "0"})
         # check whether it's valid:
         if form.is_valid():
             data = Data(content=form.cleaned_data['data'])
@@ -33,9 +33,10 @@ def get_hash(request):
                 'data': data,
                 'hash':hash,
             }
-            print(data)
-            print(hash)
-            return render(request, 'hash/new.html', context)
+
+            form = NewhashForm(initial={'data': data, 'h': hash})
+
+            return render(request, 'hash/new.html', {'form': form})
 
     # if a GET (or any other method) we'll create a blank form
     else:
@@ -50,7 +51,7 @@ def get_block(request):
     if request.method == 'POST':
         print("cccc")
         # create a form instance and populate it with data from the request:
-        form = NewblockForm(request.POST)
+        form = NewblockForm(request.POST, initial={'h': "0"})
         # check whether it's valid:
         if form.is_valid():
             block = Block(block_num=form.cleaned_data['block_num'],
@@ -69,13 +70,10 @@ def get_block(request):
                 'data': data,
                 'h':h,
             }
-            print(block_num)
-            print(nonce)
-            print(data)
-            print(h)
 
+            form = MineForm(initial={'block_num': block_num, 'nonce': nonce, 'data': data, 'h': h})
 
-            return render(request, 'hash/block.html', context)
+            return render(request, 'hash/block.html', {'form': form})
 
     # if a GET (or any other method) we'll create a blank form
     else:
@@ -91,7 +89,7 @@ def mine(request):
     if request.method == 'POST':
         print("eeee")
         # create a form instance and populate it with data from the request:
-        form = MineForm(request.POST, initial={'nonce': "0"})
+        form = MineForm(request.POST, initial={'h': "0"})
         # check whether it's valid:
         if form.is_valid():
             block = Block(block_num=form.cleaned_data['block_num'],
@@ -111,17 +109,15 @@ def mine(request):
                 'h':dict["hash"],
                 'data': data,
             }
-            print(block_num)
-            print(nonce)
-            print(data)
+
+            form = MineForm(initial={'block_num':block_num, 'nonce':dict["nonce"],'data': data,'h':dict["hash"]})
 
 
-
-            return render(request, 'hash/mine.html', context)
+            return render(request, 'hash/mine.html', {'form': form})
 
     # if a GET (or any other method) we'll create a blank form
     else:
-        form = MineForm(initial={'nonce': "0"})
+        form = MineForm()
         print("ffff")
 
     return render(request, 'hash/mine.html', {'form': form})
