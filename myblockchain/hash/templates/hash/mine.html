@@ -6,11 +6,7 @@
 
 
 
-
-
-
-
-<div class="container alert alert-secondary">
+<div class="container alert alert-secondary" style="background-color:{% if h4 == '0000' %}DarkSeaGreen{% else %}LightCoral{% endif %};">
       <form name = "form" action = "{% url 'hash:mine' %}" method = "POST" >
           {% csrf_token %}
             {{ form|crispy }}
@@ -23,11 +19,7 @@
         </div>
       </form>
 
-            {% if data %}
 
-        <h1>the nonce that enable to get a hash with four leading zeroes is : {{nonce}} </h1>
-    <p> The hash of the block is : {{h}}</p>
-        {% endif %}
 
 
 

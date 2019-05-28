@@ -14,4 +14,6 @@ class MineForm(forms.Form):
     block_num = forms.CharField(label='Block Number', max_length=100)
     nonce = forms.CharField(label='Nonce', max_length=100)
     data = forms.CharField(label='Input Data', max_length=100)
+    timestamp = forms.CharField(label='Timestamp',disabled=True)
+    previous_h = forms.CharField(label='Previous Hash',disabled=True)
     h = forms.CharField(label='Hash',disabled=True)

@@ -1,8 +1,9 @@
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, Http404, HttpResponseRedirect
-from .models import Data, Block
+from .models import Data, Block, Blockchain
 from django.urls import reverse
 from .forms import NewhashForm, NewblockForm, MineForm
+from datetime import datetime
 
 
 def data(request):
@@ -57,7 +58,7 @@ def get_block(request):
             block = Block(block_num=form.cleaned_data['block_num'],
                           nonce=form.cleaned_data['nonce'],
                           data=form.cleaned_data['data'])
-            block.save()
+            #block.save
             block_num = block.block_num
             nonce = block.nonce
             data = block.data
@@ -71,7 +72,7 @@ def get_block(request):
                 'h':h,
             }
 
-            form = MineForm(initial={'block_num': block_num, 'nonce': nonce, 'data': data, 'h': h})
+            form = NewblockForm(initial={'block_num': block_num, 'nonce': nonce, 'data': data, 'h': h})
 
             return render(request, 'hash/block.html', {'form': form})
 
@@ -89,31 +90,43 @@ def mine(request):
     if request.method == 'POST':
         print("eeee")
         # create a form instance and populate it with data from the request:
-        form = MineForm(request.POST, initial={'h': "0"})
+        form = MineForm(request.POST, initial={'h': "0","previous_h": "0"*64, 'timestamp': str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))})
         # check whether it's valid:
         if form.is_valid():
-            block = Block(block_num=form.cleaned_data['block_num'],
+            block = Block(
+                          block_num=form.cleaned_data['block_num'],
                           nonce="0",
-                          data=form.cleaned_data['data'])
-            block.save()
+                          data=form.cleaned_data['data'],
+                          timestamp=str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+                            )
+            #block.save()
             block_num = block.block_num
             nonce = block.nonce
             data = block.data
+            timestamp=block.timestamp
 
             dict = block.mine()
             print(dict)
+            h4 = dict["hash"][:4]
+            print(h4)
 
-            context = {
-                'block_num':block_num,
-                'nonce':dict["nonce"],
-                'h':dict["hash"],
-                'data': data,
-            }
+            # context = {
+            #     'block_num':block_num,
+            #     'nonce':dict["nonce"],
+            #     'h':dict["hash"],
+            #     'data': data,
+            #     'timestamp': timestamp,
+            # }
 
-            form = MineForm(initial={'block_num':block_num, 'nonce':dict["nonce"],'data': data,'h':dict["hash"]})
+            form = MineForm(initial={'block_num':block_num,
+                                     'nonce':dict["nonce"],
+                                     'data': data,
+                                     'timestamp': timestamp,
+                                     "previous_h": "0"*64,
+                                     'h':dict["hash"]})
 
 
-            return render(request, 'hash/mine.html', {'form': form})
+            return render(request, 'hash/mine.html', {'h4':h4,'form': form})
 
     # if a GET (or any other method) we'll create a blank form
     else:
@@ -121,3 +134,22 @@ def mine(request):
         print("ffff")
 
     return render(request, 'hash/mine.html', {'form': form})
+
+
+def blockchain(request):
+    genblock = Blockchain.genesis_block
+    form0 = MineForm(initial={'block_num': genblock.block_num,
+                      'nonce': genblock.nonce,
+                      'data': genblock.data,
+                      'timestamp': genblock.timestamp,
+                      "previous_h": genblock.previous_hash,
+                      'h': genblock.hash})
+
+    if request.method == 'POST':
+        for i in range(1,len(Blockchain.chain)+5):
+            form = ("form"+str(i))
+
+
+        return HttpResponse("<h1>MyClub Event Calendar</h1>")
+    else:
+        return render(request, 'hash/blockchain.html', {'form0': form0})
