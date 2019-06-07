@@ -17,39 +17,16 @@ class Data(models.Model):
 
 class Blockchain(models.Model):
     chain_num = models.CharField(max_length=100, default="0", primary_key=True)
-    #current_transactions = []
-    # chain = []
-    # # Create the genesis block
-    # genesis_block = Block(
-    #                       block_num='0',
-    #                       nonce="0",
-    #                       data='Genesis Block',
-    #                       timestamp="2019-05-24 00:00:00",
-    #                       hash='0'*64,
-    #                       previous_hash='0'*64
-    # )
-    #
-    #
-    # def new_block(self):
-    #     """
-    #     Create a new Block in the Blockchain
-    #     :param proof: <int> The proof given by the Proof of Work algorithm
-    #     :param previous_hash: (Optional) <str> Hash of previous Block
-    #     :return: <dict> New Block
-    #     """
-    #
-    #     block = {
-    #         'block_num': len(self.chain) + 1,
-    #         'nonce':"0",
-    #         'data':' ',
-    #         'timestamp': str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    #     }
-    #
-    #     # Reset the current list of transactions
-    #     #self.current_transactions = []
-    #
-    #     self.chain.append(block)
-    #     return block
+
+    def chain(self):
+        return list(Block.objects.all().values().order_by('block_num'))
+
+    def last_block(self):
+        return self.chain()[-1]
+
+    def reset(self):
+        del self.chain()[2:-1]
+        return self.chain()
 
 class Block(models.Model):
     block_num = models.CharField(max_length=100, primary_key=True)

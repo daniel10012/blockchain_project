@@ -1,8 +1,8 @@
 from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponse, Http404, HttpResponseRedirect
+from django.http import HttpResponse, Http404, HttpResponseRedirect, JsonResponse
 from .models import Data, Block, Blockchain
 from django.urls import reverse
-from .forms import NewhashForm, NewblockForm, MineForm
+from .forms import NewhashForm, NewblockForm, MineForm, GenesisForm
 from datetime import datetime
 
 
@@ -137,19 +137,69 @@ def mine(request):
 
 
 def blockchain(request):
-    genblock = Blockchain.genesis_block
-    form0 = MineForm(initial={'block_num': genblock.block_num,
-                      'nonce': genblock.nonce,
-                      'data': genblock.data,
-                      'timestamp': genblock.timestamp,
-                      "previous_h": genblock.previous_hash,
-                      'h': genblock.hash})
 
-    if request.method == 'POST':
-        for i in range(1,len(Blockchain.chain)+5):
-            form = ("form"+str(i))
+    blockchain_0 = Blockchain(chain_num="0")
+    genesis_block = Block(block_num = "0",
+                            nonce = "0",
+                            data = "Genesis Block",
+                            timestamp = "2019-05-01 00:00:00",
+                            hash = "0",
+                            previous_hash = "0",
+                            blockchain = blockchain_0,)
+    genesis_block.save()
+
+    form0 = GenesisForm(initial={'block_num': genesis_block.block_num,
+                             'nonce': genesis_block.nonce,
+                             'data': genesis_block.data,
+                             'timestamp': genesis_block.timestamp,
+                             "previous_h": genesis_block.previous_hash,
+                             'h': genesis_block.hash})
+
+    form_dict = {}
+    form_dict["form0"]=form0
 
 
-        return HttpResponse("<h1>MyClub Event Calendar</h1>")
-    else:
-        return render(request, 'hash/blockchain.html', {'form0': form0})
+    lenght_blockchain = (len(blockchain_0.chain()))
+
+
+
+    for i in range(1,lenght_blockchain):
+        #print(str(i))
+        # if str(i) in request.POST:
+        #     print("YOOOOOOOOO")
+
+        if request.method == 'POST':
+
+            current_form = MineForm(initial={'block_num':str(i),
+                                         'timestamp': "timestamp",
+                                         "previous_h":"yo",
+                                         'h':"666"})
+
+            if current_form.is_valid():
+                block = Block(
+                    block_num=current_form.cleaned_data['block_num'],
+                    nonce="0",
+                    data=current_form.cleaned_data['data'],
+                    timestamp=str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+                )
+
+
+                form_dict[f"form{i}"] = current_form
+
+                form_dict["forms"] = form_dict
+                #print(form_dict)
+                return render(request, 'hash/blockchain.html', form_dict)
+            #return JsonResponse(blockchain_0.chain(), safe=False)
+
+        else:
+            for i in range(1, lenght_blockchain):
+                current_form = MineForm(initial={'block_num': str(i),
+                                                 'timestamp': "timestamp",
+                                                 "previous_h": "yo",
+                                                 'h': "666"})
+                form_dict[f"form{i}"] = current_form
+
+            form_dict["forms"] = form_dict
+            print(form_dict)
+            return render(request, 'hash/blockchain.html', form_dict)
+

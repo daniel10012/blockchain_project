@@ -3,50 +3,36 @@
 {% load crispy_forms_tags %}
 
 
-
+<div class="container-fluid">
 {% block content %}
 
 
+    <div class="row">
+        {% for k,v in forms.items  %}
+            {% if k != "forms" %}
 
 
-<div class="row">
+                <div class="col-md-4">
 
-    <div class="col-md-4">
+                    <div class="container alert alert-secondary" >
+                        <form name = "form0" action = "{% url 'hash:blockchain' %}" method = "POST" >
+                            {% csrf_token %}
+                            {{ v|crispy }}
 
-        <div class="container alert alert-secondary" >
-      <form name = "form0" action = "{% url 'hash:blockchain' %}" method = "POST" >
-          {% csrf_token %}
-            {{ form0|crispy }}
+                            <div class="row">
+                                <div class="col-lg-8 text-center">
+                                    <input type="submit" id="other" name="{{v.block_num.value}}" class="btn btn-primary btn-lg" value="{{v.block_num.value}}">
+                                </div>
+                            </div>
 
-
-        <div class="row">
-          <div class="col-lg-12 text-center">
-            <input type="submit" id="get_nonce" class="btn btn-primary btn-lg" value="Mine">
-          </div>
-        </div>
-      </form>
-
-
-
-
-
-    </div>
-
-    <div class="col-md-4">
-
-        <div id="block2" class="container alert alert-secondary" >
-            <form name = "form" action = "{% url 'hash:blockchain' %}" method = "POST" >
-                {% csrf_token %}
-                {{ form1|crispy }}
-
-                <div class="row">
-                    <div class="col-lg-12 text-center">
-                        <input type="submit" id="other" class="btn btn-primary btn-lg" value="Mine">
+                        </form>
                     </div>
                 </div>
-            </form>
-        </div>
+
+            {% endif %}
+        {% endfor %}
     </div>
+
 </div>
 
 
